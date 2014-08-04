@@ -1,20 +1,38 @@
-<?php
-ini_set('display_errors', 1); //Allow error mesages
+<?php require_once('includes/init.php'); ?>
 
-/*Load the SplClassLoader and Register Michelf namespace*/
-require_once('libraries/Doctrine/SplClassLoader.php');
-$loadMichelf = new SplClassLoader('Michelf', 'libraries/');
-$loadMichelf->register();
+<!DOCTYPE html>
 
-use \Michelf\MarkdownExtra;
+<head>
+	<title>Branding Bible</title>
 
-/*PROOF OF CONCEPT*/
-/*
-$practiceText = "##Pratice Header##";
-$finalText = MarkdownExtra::defaultTransform($practiceText);
-print_r($finalText);
-*/
+	<?php
+		//Set Up Content
+
+		//Collect Filenames
+		$sections = Siren\BrandBible::collectTitles('sections','.md');
+
+		//Get Filename => Content Pair
+		$contentPair = Siren\BrandBible::collectContent();
+		$cPKey = key($contentPair);
+
+		//Use MarkdownExtra to generate HTML content
+		use \Michelf\MarkdownExtra;
+		$content = MarkdownExtra::defaultTransform($contentPair[$cPKey]);
+	?>
+</head>
 
 
+<body>
+	<?php
+		use \Siren\BrandBible;
+		
+		//Create Navigation
+		Siren\BrandBible::generateNav($sections);
 
-?>
+		//Create Content
+		Siren\BrandBible::generateContent($content);
+	
+	?>
+</body>
+
+</html>
